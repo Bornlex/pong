@@ -3,6 +3,9 @@
 import turtle
 
 
+log_file = open('error.log', 'w+')
+
+
 class Environment(object):
     def __init__(self):
         # Variables
@@ -65,6 +68,7 @@ class Environment(object):
         self.score.write(f"Hit: {self.hit}   Missed: {self.miss}", align='center', font=('Courier', 24, 'normal'))
     
     def reset(self):
+        log_file.write(f'px: {self.paddle.xcor()}, bx: {self.ball.xcor()}, by: {self.ball.ycor()}, bdx: {self.ball.dx}, bdy: {self.ball.dy}\n')
         self.paddle.goto(0, -275)
         self.ball.goto(0, 100)
         return [
@@ -87,10 +91,10 @@ class Environment(object):
         reward, done = 0, 0
         if action == 0:
             self.paddle_left()
-            reward -= 0.05
+            reward -= 0.07
         if action == 2:
             self.paddle_right()
-            reward -= 0.05
+            reward -= 0.07
         self.frame()
         state = [
             self.paddle.xcor(),
@@ -115,17 +119,23 @@ class Environment(object):
             self.ball.sety(290)
             self.ball.dy *= -1
 
-        if abs(self.ball.ycor() + 250) < 2 and abs(self.paddle.xcor() - self.ball.xcor()) < 55:
-            self.ball.dy *= -1
-            self.hit += 1
-            self.score.clear()
-            self.write_score()
-            self.reward += 3
-
-        if self.ball.ycor() < -290:
-            self.ball.goto(0, 100)
-            self.miss += 1
-            self.score.clear()
-            self.write_score()
-            self.reward -= 3
-            self.done = True
+        if self.ball.ycor() < -255:
+            if self.ball.xcor() > self.paddle.xcor() - 60 and self.ball.xcor() < self.paddle.xcor() + 60:
+                ###
+                # Hit the ball
+                ###
+                self.ball.dy *= -1
+                self.hit += 1
+                self.score.clear()
+                self.write_score()
+                self.reward += 3
+            else:
+                ###
+                # Missed the ball
+                ###
+                self.ball.goto(0, 100)
+                self.miss += 1
+                self.score.clear()
+                self.write_score()
+                self.reward -= 3
+                self.done = True
