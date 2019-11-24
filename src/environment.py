@@ -68,7 +68,7 @@ class Environment(object):
         self.score.write(f"Hit: {self.hit}   Missed: {self.miss}", align='center', font=('Courier', 24, 'normal'))
     
     def reset(self):
-        log_file.write(f'px: {self.paddle.xcor()}, bx: {self.ball.xcor()}, by: {self.ball.ycor()}, bdx: {self.ball.dx}, bdy: {self.ball.dy}\n')
+        #log_file.write(f'px: {self.paddle.xcor()}, bx: {self.ball.xcor()}, by: {self.ball.ycor()}, bdx: {self.ball.dx}, bdy: {self.ball.dy}\n')
         self.paddle.goto(0, -275)
         self.ball.goto(0, 100)
         return [
@@ -91,10 +91,10 @@ class Environment(object):
         reward, done = 0, 0
         if action == 0:
             self.paddle_left()
-            reward -= 0.07
+            reward -= 0.05
         if action == 2:
             self.paddle_right()
-            reward -= 0.07
+            reward -= 0.05
         self.frame()
         state = [
             self.paddle.xcor(),
