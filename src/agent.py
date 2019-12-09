@@ -18,7 +18,7 @@ class Agent(object):
         self.action_space  = action_space
         self.state_space   = state_space
         self.epsilon       = 1
-        self.gamma         = 0.95
+        self.gamma         = 0.90
         self.batch_size    = 64
         self.epsilon_min   = 0.01
         self.epsilon_decay = 0.995
@@ -28,8 +28,8 @@ class Agent(object):
     
     def build_model(self):
         input_x = keras.layers.Input(shape=(self.state_space,))
-        x = keras.layers.Dense(64, activation='relu')(input_x)
-        x = keras.layers.Dense(64, activation='relu')(x)
+        x = keras.layers.Dense(32, activation='relu')(input_x)
+        x = keras.layers.Dense(32, activation='relu')(x)
         x = keras.layers.Dense(self.action_space, activation='linear')(x)
         model = keras.models.Model(input_x, x)
         model.compile(optimizer=keras.optimizers.Adam(lr=self.learning_rate), loss='mse')

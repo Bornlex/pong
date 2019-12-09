@@ -13,7 +13,7 @@ if __name__ == "__main__":
     environment = Environment()
     agent = Agent(3, 5)
     loss = []
-    episode = 100
+    episode = 1000
     for e in range(episode):
         state = environment.reset()
         state = np.reshape(state, (1, 5))
@@ -26,10 +26,11 @@ if __name__ == "__main__":
             next_state = np.reshape(next_state, (1, 5))
             agent.remember(state, action, reward, next_state, done)
             state = next_state
-            agent.replay()
+            #agent.replay()
             if done:
                 print(f"Episode {e}/{episode}, score: {score}")
                 break
+        agent.replay()
         loss.append(score)
     plt.plot([i for i in range(episode)], loss)
     plt.xlabel("episodes")

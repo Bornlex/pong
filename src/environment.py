@@ -1,6 +1,7 @@
 #coding: utf-8
 
 import turtle
+import random
 
 
 log_file = open('error.log', 'w+')
@@ -68,13 +69,14 @@ class Environment(object):
         self.score.write(f"Hit: {self.hit}   Missed: {self.miss}", align='center', font=('Courier', 24, 'normal'))
     
     def reset(self):
-        #log_file.write(f'px: {self.paddle.xcor()}, bx: {self.ball.xcor()}, by: {self.ball.ycor()}, bdx: {self.ball.dx}, bdy: {self.ball.dy}\n')
+        self.done = False
+        self.reward = 0
         self.paddle.goto(0, -275)
         self.ball.goto(0, 100)
         return [
-            self.paddle.xcor() * 0.01,
-            self.ball.xcor() * 0.01,
-            self.ball.ycor() * 0.01,
+            self.paddle.xcor(),# * 0.01,
+            self.ball.xcor(),# * 0.01,
+            self.ball.ycor(),# * 0.01,
             self.ball.dx,
             self.ball.dy
         ]
@@ -83,18 +85,17 @@ class Environment(object):
         """
         Performs an action:
         - moving left  : 0
-        - moving right : 2
-        - not moving   : 1
+        - moving right : 1
+        - not moving   : 2
 
         We penalize the agent when moving so it does not move unecessarily.
         """
-        reward, done = 0, 0
         if action == 0:
             self.paddle_left()
-            reward -= 0.05
-        if action == 2:
+            self.reward -= 0.005
+        if action == 1:
             self.paddle_right()
-            reward -= 0.05
+            self.reward -= 0.005
         self.frame()
         state = [
             self.paddle.xcor(),
@@ -103,7 +104,7 @@ class Environment(object):
             self.ball.dx,
             self.ball.dy
         ]
-        return reward, state, done
+        return self.reward, state, self.done
 
     def frame(self):
         self.window.update()
@@ -134,8 +135,10 @@ class Environment(object):
                 # Missed the ball
                 ###
                 self.ball.goto(0, 100)
+                self.ball.dx = random.choice([-4.5, -3, 3, 4.5])
+                self.ball.dy = random.choice([-4.5, -3, 3, 4.5])
                 self.miss += 1
                 self.score.clear()
                 self.write_score()
-                self.reward -= 3
+                self.reward -= 5
                 self.done = True
